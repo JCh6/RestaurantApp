@@ -2,8 +2,8 @@ package handler
 
 import (
 	"fmt"
-	"restaurantapp/pkg/models/products"
 	"net/http"
+	"restaurantapp/pkg/models/products"
 )
 
 func ProductsGet(products products.Getter) http.HandlerFunc {

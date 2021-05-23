@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"log"
 	"bytes"
+	"log"
 	"net/http"
 	"restaurantapp/pkg/schema"
 )
@@ -14,11 +14,13 @@ func PostSchema(url string) bool {
 	}
 
 	body := schema.Get()
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(body))
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
+
+	log.Println("POST: " + req.URL.String())
 
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +29,7 @@ func PostSchema(url string) bool {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Fatalf("%s: %s", resp.Status, resp.Body)
+		log.Fatal(resp.Status)
 	}
 
 	return true

@@ -9,8 +9,8 @@ type Adder interface {
 }
 
 type Item struct {
-	Id string
-	Name  string
+	Id   string
+	Name string
 }
 
 type Repo struct {
