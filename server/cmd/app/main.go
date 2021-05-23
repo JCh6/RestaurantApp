@@ -4,7 +4,7 @@ import (
 	/*"restaurantapp/pkg/models/products"
 	"github.com/go-chi/chi/v5"
 	"net/http"*/
-	//"os"
+	"os"
 	//"bytes"
 	//"fmt"
 	"log"
@@ -22,15 +22,14 @@ func main() {
 
 	http.ListenAndServe(port, rr)*/
 	///////////////////
-	/*
 
-		urlSetSchema := os.Getenv("SET_SCHEMA_DIR")*/
+	urlSetSchema := os.Getenv("SET_SCHEMA_DIR")
 
-	/*if handler.PostSchema(urlSetSchema) {
+	if handler.PostSchema(urlSetSchema) {
 		log.Println("Schema created!")
-	}*/
+	}
 
-	p := []string{"date", "1231512"}
+	/*p := []string{"date", "1231512"}
 	handler.Get("https://kqxty15mpg.execute-api.us-east-1.amazonaws.com/transactions", p)
-	log.Println("Done!")
+	log.Println("Done!")*/
 }
