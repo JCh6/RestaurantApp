@@ -1,15 +1,16 @@
 package handler
 
 import (
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-func Get(url string, params []string) (bool, string) {
+func Get(url string, params []string) (error, string) {
 
 	if url == "" {
-		return false, ""
+		return errors.New("Empty url"), ""
 	}
 
 	req, _ := http.NewRequest("GET", url, nil)
@@ -27,25 +28,20 @@ func Get(url string, params []string) (bool, string) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		log.Println(err)
-		return false, ""
+		return err, ""
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		log.Println(resp.Status)
-		return false, ""
+		return errors.New(resp.Status), ""
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		log.Println(err)
-		return false, ""
+		return err, ""
 	}
 
-	log.Println(string(body))
-
-	return true, string(body)
+	return nil, string(body)
 }

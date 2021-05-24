@@ -6,7 +6,7 @@ func Get() []byte {
 		type Product {
 			id: String! @id
 			name: String!
-			price: Int!
+			price: Float!
 		}
 
 		type Buyer {

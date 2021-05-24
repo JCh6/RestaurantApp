@@ -9,27 +9,23 @@ import (
 	//"fmt"
 	"log"
 	//"io/ioutil"
-	//"net/http"
+	"github.com/go-chi/chi/v5"
+	"net/http"
 	"restaurantapp/cmd/handler"
 )
 
 func main() {
-	/*port := ":9080"
-	products := products.New()
-	rr := chi.NewRouter()
+	//urlSetSchema := os.Getenv("SET_SCHEMA_DIR")
 
-	rr.Get("/products", handler.ProductsGet(products))
+	//if handler.PostSchema(urlSetSchema) {
+	log.Println("Schema created!")
+	port := os.Getenv("PORT")
+	baseUrl := os.Getenv("BASE_ENDPOINT")
+	r := chi.NewRouter()
 
-	http.ListenAndServe(port, rr)*/
-	///////////////////
+	r.Get("/load", handler.GetData(baseUrl))
 
-	urlSetSchema := os.Getenv("SET_SCHEMA_DIR")
-
-	if handler.PostSchema(urlSetSchema) {
-		log.Println("Schema created!")
-	}
-
-	/*p := []string{"date", "1231512"}
-	handler.Get("https://kqxty15mpg.execute-api.us-east-1.amazonaws.com/transactions", p)
-	log.Println("Done!")*/
+	log.Println("Server ready at :" + port)
+	http.ListenAndServe(":"+port, r)
+	//}
 }
