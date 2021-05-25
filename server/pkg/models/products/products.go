@@ -1,32 +1,15 @@
 package products
 
-type Getter interface {
-	GetAll() []Item
+type Product struct {
+	Id    string
+	Name  string
+	Price float32
 }
 
-type Adder interface {
-	Add(item Item)
-}
-
-type Item struct {
-	Id   string
-	Name string
-}
-
-type Repo struct {
-	Items []Item
-}
-
-func New() *Repo {
-	return &Repo{
-		Items: []Item{},
+func New(id string, name string, price float32) *Product {
+	return &Product{
+		Id:    id,
+		Name:  name,
+		Price: price,
 	}
-}
-
-func (r *Repo) Add(item Item) {
-	r.Items = append(r.Items, item)
-}
-
-func (r *Repo) GetAll() []Item {
-	return r.Items
 }

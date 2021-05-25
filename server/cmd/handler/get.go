@@ -7,10 +7,10 @@ import (
 	"net/http"
 )
 
-func Get(url string, params []string) (error, string) {
+func Get(url string, params []string) (string, error, int) {
 
 	if url == "" {
-		return errors.New("Empty url"), ""
+		return "", errors.New("Empty url"), 400
 	}
 
 	req, _ := http.NewRequest("GET", url, nil)
@@ -28,20 +28,20 @@ func Get(url string, params []string) (error, string) {
 	resp, err := client.Do(req)
 
 	if err != nil {
-		return err, ""
+		return "", err, 503
 	}
 
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return errors.New(resp.Status), ""
+		return "", errors.New(resp.Status), resp.StatusCode
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 
 	if err != nil {
-		return err, ""
+		return "", err, 503
 	}
 
-	return nil, string(body)
+	return string(body), nil, resp.StatusCode
 }
