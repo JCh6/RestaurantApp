@@ -14,7 +14,7 @@ func GetGraphQL() *graphql.Client {
 	return graphql.NewClient(os.Getenv("GRAPHQL"))
 }
 
-func InsertToDgraph(t string, body string) {
+func InsertToDgraph(t string, body string) error {
 
 	var req *graphql.Request
 	client := GetGraphQL()
@@ -34,8 +34,9 @@ func InsertToDgraph(t string, body string) {
 
 	var graphqlResponse interface{}
 	if err := client.Run(ctx, req, &graphqlResponse); err != nil {
-		log.Fatal(err)
+		return err
 	}
 	log.Println(graphqlResponse)
 
+	return nil
 }
