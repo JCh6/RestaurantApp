@@ -1,9 +1,6 @@
 package main
 
 import (
-	/*"restaurantapp/pkg/models/products"
-	"github.com/go-chi/chi/v5"
-	"net/http"*/
 	"os"
 	//"bytes"
 	//"fmt"
