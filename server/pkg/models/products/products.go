@@ -1,5 +1,12 @@
 package products
 
+import (
+	"encoding/csv"
+	"io"
+	"strconv"
+	"strings"
+)
+
 type Product struct {
 	Id    string  `json:"id"`
 	Name  string  `json:"name"`
@@ -14,18 +21,40 @@ func New(id string, name string, price float32) *Product {
 	}
 }
 
-func RemoveDuplicates(list []Product) []Product {
+func ReadBody(body string) ([]Product, error) {
+	var input []Product
 	keys := make(map[string]bool)
-	newList := []Product{}
+	r := csv.NewReader(strings.NewReader(body))
+	r.Comma = '\''
 
-	for _, entry := range list {
-		if _, value := keys[entry.Id]; !value {
-			keys[entry.Id] = true
-			newList = append(newList, entry)
+	for {
+		record, err := r.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		price, err := strconv.ParseFloat(record[2], 32)
+
+		if err != nil {
+			return nil, err
+		}
+
+		id := record[1]
+
+		newProduct := New(record[0], id, float32(price))
+
+		if _, value := keys[id]; !value {
+			keys[id] = true
+			input = append(input, *newProduct)
 		}
 	}
 
-	return newList
+	return input, nil
 }
 
 func AddProductGQL() string {

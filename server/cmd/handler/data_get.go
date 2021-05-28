@@ -31,9 +31,9 @@ func GetData(url string) http.HandlerFunc {
 			return
 		}
 
-		check error InsertToDgraph("Buyer", bodyBuyers)*/
+		chck error InsertToDgraph("Buyer", bodyBuyers)*/
 
-		bodyProducts, err, status := Get(url+"/products", params)
+		/*bodyProducts, err, status := Get(url+"/products", params)
 
 		if err != nil {
 			resp = response.New(status, err.Error(), bodyProducts)
@@ -42,16 +42,18 @@ func GetData(url string) http.HandlerFunc {
 			return
 		}
 
-		InsertToDgraph("Product", bodyProducts)
+		InsertToDgraph("Product", bodyProducts)*/
 
-		/*bodyTransactions, err, status := Get(url+"/transactions", params)
+		bodyTransactions, err, status := Get(url+"/transactions", params)
 
 		if err != nil {
 			resp = response.New(status, err.Error(), bodyTransactions)
 			resBodyBytes, _ := json.Marshal(resp)
 			w.Write(resBodyBytes)
 			return
-		}*/
+		}
+
+		InsertToDgraph("Transaction", bodyTransactions)
 
 		resp = response.New(200, "", "OK")
 		resBodyBytes, _ := json.Marshal(resp)

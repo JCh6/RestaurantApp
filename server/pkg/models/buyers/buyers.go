@@ -1,5 +1,9 @@
 package buyers
 
+import (
+	"encoding/json"
+)
+
 type Buyer struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
@@ -12,6 +16,16 @@ func New(id string, name string, age int) *Buyer {
 		Name: name,
 		Age:  age,
 	}
+}
+
+func ReadBody(body string) ([]Buyer, error) {
+	var input []Buyer
+
+	if err := json.Unmarshal([]byte(body), &input); err != nil {
+		return nil, err
+	}
+
+	return input, nil
 }
 
 func RemoveDuplicates(list []Buyer) []Buyer {

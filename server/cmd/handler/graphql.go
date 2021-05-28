@@ -2,16 +2,12 @@ package handler
 
 import (
 	"context"
-	"encoding/csv"
-	"encoding/json"
+	"errors"
 	"github.com/machinebox/graphql"
-	"io"
 	"log"
 	"os"
 	ModelBuyer "restaurantapp/pkg/models/buyers"
 	ModelProduct "restaurantapp/pkg/models/products"
-	"strconv"
-	"strings"
 )
 
 func GetGraphQL() *graphql.Client {
@@ -25,9 +21,9 @@ func InsertToDgraph(t string, body string) error {
 
 	if t == "Buyer" {
 
-		var input []ModelBuyer.Buyer
+		input, err := ModelBuyer.ReadBody(body)
 
-		if err := json.Unmarshal([]byte(body), &input); err != nil {
+		if err != nil {
 			return err
 		}
 
@@ -36,34 +32,19 @@ func InsertToDgraph(t string, body string) error {
 
 	} else if t == "Product" {
 
-		var input []ModelProduct.Product
-		r := csv.NewReader(strings.NewReader(body))
-		r.Comma = '\''
+		input, err := ModelProduct.ReadBody(body)
 
-		for {
-			record, err := r.Read()
-
-			if err == io.EOF {
-				break
-			}
-
-			if err != nil {
-				return err
-			}
-
-			price, err := strconv.ParseFloat(record[2], 32)
-
-			if err != nil {
-				return err
-			}
-
-			newProduct := ModelProduct.New(record[0], record[1], float32(price))
-			input = append(input, *newProduct)
+		if err != nil {
+			return err
 		}
 
 		req = graphql.NewRequest(ModelProduct.AddProductGQL())
-		req.Var("input", ModelProduct.RemoveDuplicates(input))
+		req.Var("input", input)
 
+	} else if t == "Transaction" {
+
+	} else {
+		return errors.New("Not defined")
 	}
 
 	req.Header.Set("Cache-Control", "no-cache")
