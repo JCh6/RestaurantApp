@@ -8,6 +8,7 @@ import (
 	"os"
 	ModelBuyer "restaurantapp/pkg/models/buyers"
 	ModelProduct "restaurantapp/pkg/models/products"
+	ModelTransaction "restaurantapp/pkg/models/transactions"
 )
 
 func GetGraphQL() *graphql.Client {
@@ -42,6 +43,14 @@ func InsertToDgraph(t string, body string) error {
 		req.Var("input", input)
 
 	} else if t == "Transaction" {
+
+		_, err := ModelTransaction.ReadBody(body)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
 
 	} else {
 		return errors.New("Not defined")
