@@ -22,7 +22,7 @@ func GetData(url string) http.HandlerFunc {
 		params = append(params, "date")
 		params = append(params, date)
 
-		/*bodyBuyers, err, status := Get(url+"/buyers", params)
+		bodyBuyers, err, status := Get(url+"/buyers", params)
 
 		if err != nil {
 			resp = response.New(status, err.Error(), bodyBuyers)
@@ -31,9 +31,14 @@ func GetData(url string) http.HandlerFunc {
 			return
 		}
 
-		chck error InsertToDgraph("Buyer", bodyBuyers)*/
+		if err := InsertToDgraph("Buyer", bodyBuyers); err != nil {
+			resp = response.New(status, err.Error(), bodyBuyers)
+			resBodyBytes, _ := json.Marshal(resp)
+			w.Write(resBodyBytes)
+			return
+		}
 
-		/*bodyProducts, err, status := Get(url+"/products", params)
+		bodyProducts, err, status := Get(url+"/products", params)
 
 		if err != nil {
 			resp = response.New(status, err.Error(), bodyProducts)
@@ -42,7 +47,12 @@ func GetData(url string) http.HandlerFunc {
 			return
 		}
 
-		InsertToDgraph("Product", bodyProducts)*/
+		if err := InsertToDgraph("Product", bodyProducts); err != nil {
+			resp = response.New(status, err.Error(), bodyBuyers)
+			resBodyBytes, _ := json.Marshal(resp)
+			w.Write(resBodyBytes)
+			return
+		}
 
 		bodyTransactions, err, status := Get(url+"/transactions", params)
 
@@ -53,7 +63,12 @@ func GetData(url string) http.HandlerFunc {
 			return
 		}
 
-		InsertToDgraph("Transaction", bodyTransactions)
+		if err := InsertToDgraph("Transaction", bodyTransactions); err != nil {
+			resp = response.New(status, err.Error(), bodyTransactions)
+			resBodyBytes, _ := json.Marshal(resp)
+			w.Write(resBodyBytes)
+			return
+		}
 
 		resp = response.New(200, "", "OK")
 		resBodyBytes, _ := json.Marshal(resp)

@@ -1,62 +1,76 @@
 package transactions
 
 import (
-	"fmt"
-	"log"
 	ModelBuyer "restaurantapp/pkg/models/buyers"
 	ModelProduct "restaurantapp/pkg/models/products"
-	Util "restaurantapp/utils"
 	"strings"
 )
 
-type Device string
-
 const (
-	IOS     Device = "ios"
-	ANDROID        = "android"
-	WINDOWS        = "windows"
-	LINUX          = "linux"
-	MAC            = "mac"
+	IOS     = "ios"
+	ANDROID = "android"
+	WINDOWS = "windows"
+	LINUX   = "linux"
+	MAC     = "mac"
 )
 
 type Transaction struct {
-	Id       string
-	buyer    ModelBuyer.Buyer
-	ip       string
-	device   Device
-	products []ModelProduct.Product
+	Id       string                 `json:"id"`
+	Buyer    ModelBuyer.Buyer       `json:"buyer"`
+	Ip       string                 `json:"ip"`
+	Device   string                 `json:"device"`
+	Products []ModelProduct.Product `json:"products"`
+}
+
+func New(id string, buyer ModelBuyer.Buyer, ip string, device string, products []ModelProduct.Product) *Transaction {
+	return &Transaction{
+		Id:       id,
+		Buyer:    buyer,
+		Ip:       ip,
+		Device:   device,
+		Products: products,
+	}
 }
 
 func ReadBody(body string) ([]Transaction, error) {
 	var input []Transaction
-	var idx []int
-	txnIdLength := 12
+	var products []ModelProduct.Product
 	txnList := strings.Split(body, "#")
 
 	for _, txn := range txnList {
 
-		if len(txn) >= txnIdLength {
-			txnId := txn[:txnIdLength]
-			idx = Util.FindStringIndex(`((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)`, txn)
+		parts := strings.Split(txn, "\x00")
 
-			if len(idx) > 0 {
-				ip := txn[idx[0]:idx[1]]
-				buyerId := txn[txnIdLength:idx[0]]
-				idx = Util.FindStringIndex(fmt.Sprintf("%s|%s|%s|%s|%s", IOS, ANDROID, WINDOWS, LINUX, MAC), txn)
+		if len(parts) >= 5 {
+			txnId := parts[0]
+			buyerId := parts[1]
+			ip := parts[2]
+			device := parts[3]
+			prods := strings.Split(parts[4][1:len(parts[4])-1], ",")
 
-				if len(idx) > 0 {
-					device := txn[idx[0]:idx[1]]
-					idx = Util.FindStringIndex(`\(.*\)`, txn)
-
-					if len(idx) > 0 {
-						prods := txn[idx[0]+1 : idx[1]-1]
-					}
-
-				}
+			for _, product := range prods {
+				newProduct := ModelProduct.Product{Id: product}
+				products = append(products, newProduct)
 			}
+
+			newBuyer := ModelBuyer.Buyer{Id: buyerId}
+			newTransaction := New(txnId, newBuyer, ip, device, products)
+			input = append(input, *newTransaction)
 		}
 
 	}
 
 	return input, nil
+}
+
+func AddTransactionGQL() string {
+	return (`
+		mutation($input: [AddTransactionInput!]!) {
+			addTransaction(input: $input) {
+		  		transaction {
+					id
+		  		}
+			}
+	  	}
+	`)
 }

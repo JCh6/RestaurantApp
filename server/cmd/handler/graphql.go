@@ -22,6 +22,7 @@ func InsertToDgraph(t string, body string) error {
 
 	if t == "Buyer" {
 
+		log.Println("Loading buyers")
 		input, err := ModelBuyer.ReadBody(body)
 
 		if err != nil {
@@ -33,6 +34,7 @@ func InsertToDgraph(t string, body string) error {
 
 	} else if t == "Product" {
 
+		log.Println("Loading products")
 		input, err := ModelProduct.ReadBody(body)
 
 		if err != nil {
@@ -44,13 +46,15 @@ func InsertToDgraph(t string, body string) error {
 
 	} else if t == "Transaction" {
 
-		_, err := ModelTransaction.ReadBody(body)
+		log.Println("Loading transactions")
+		input, err := ModelTransaction.ReadBody(body)
 
 		if err != nil {
 			return err
 		}
-
-		return nil
+		log.Printf("Transacciones: %d\n", len(input))
+		req = graphql.NewRequest(ModelTransaction.AddTransactionGQL())
+		req.Var("input", input)
 
 	} else {
 		return errors.New("Not defined")
@@ -60,11 +64,12 @@ func InsertToDgraph(t string, body string) error {
 
 	ctx := context.Background()
 
-	var graphqlResponse interface{}
-	if err := client.Run(ctx, req, &graphqlResponse); err != nil {
+	log.Println("Running mutation")
+	if err := client.Run(ctx, req, nil); err != nil {
 		log.Fatal(err)
 	}
-	log.Println(graphqlResponse)
+
+	log.Println("Successfully inserted")
 
 	return nil
 }
