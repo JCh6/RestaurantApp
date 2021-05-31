@@ -46,8 +46,8 @@ func Get() []byte {
 
 func DeleteData() []byte {
 	return []byte(`
-		{
-			"drop_op": "DATA"
-		}
+
+		{ "drop_op": "DATA" }
+
 	`)
 }

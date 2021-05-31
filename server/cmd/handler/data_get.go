@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
-	"restaurantapp/pkg/models/response"
+	Config "restaurantapp/pkg/config"
+	ModelResponse "restaurantapp/pkg/models/response"
 	"restaurantapp/pkg/schema"
 	"strconv"
 	"time"
@@ -11,71 +11,38 @@ import (
 
 func GetData(url string, alterUrl string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		config := Config.Get()
+
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		date := r.URL.Query().Get("date")
-		var resp *response.Response
-		var params []string
-
-		if date == "" {
-			date = strconv.FormatInt(time.Now().Unix(), 10)
-		}
-
-		params = append(params, "date")
-		params = append(params, date)
 
 		if PostSchema(alterUrl, schema.DeleteData()) {
 
-			bodyBuyers, err, status := Get(url+"/buyers", params)
+			for _, endPoint := range config {
+				var params []string
+				date := r.URL.Query().Get(endPoint.Param)
 
-			if err != nil {
-				resp = response.New(status, err.Error(), bodyBuyers)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
+				if date == "" {
+					date = strconv.FormatInt(time.Now().Unix(), 10)
+				}
+
+				params = append(params, endPoint.Param)
+				params = append(params, date)
+
+				body, err, status := Get(url+endPoint.Route, params)
+
+				if err != nil {
+					w.Write(ModelResponse.GetResponseBody(status, err.Error(), ""))
+					return
+				}
+
+				if err := InsertToDgraph(endPoint.Name, body); err != nil {
+					w.Write(ModelResponse.GetResponseBody(501, err.Error(), ""))
+					return
+				}
 			}
 
-			if err := InsertToDgraph("Buyer", bodyBuyers); err != nil {
-				resp = response.New(status, err.Error(), bodyBuyers)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
-			}
+			w.Write(ModelResponse.GetResponseBody(200, "", "OK"))
 
-			bodyProducts, err, status := Get(url+"/products", params)
-
-			if err != nil {
-				resp = response.New(status, err.Error(), bodyProducts)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
-			}
-
-			if err := InsertToDgraph("Product", bodyProducts); err != nil {
-				resp = response.New(status, err.Error(), bodyBuyers)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
-			}
-
-			bodyTransactions, err, status := Get(url+"/transactions", params)
-
-			if err != nil {
-				resp = response.New(status, err.Error(), bodyTransactions)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
-			}
-
-			if err := InsertToDgraph("Transaction", bodyTransactions); err != nil {
-				resp = response.New(status, err.Error(), bodyTransactions)
-				resBodyBytes, _ := json.Marshal(resp)
-				w.Write(resBodyBytes)
-				return
-			}
-
-			resp = response.New(200, "", "OK")
-			resBodyBytes, _ := json.Marshal(resp)
-			w.Write(resBodyBytes)
 		}
 	}
 }

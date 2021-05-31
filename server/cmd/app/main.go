@@ -1,13 +1,10 @@
 package main
 
 import (
-	"os"
-	//"bytes"
-	//"fmt"
-	"log"
-	//"io/ioutil"
 	"github.com/go-chi/chi/v5"
+	"log"
 	"net/http"
+	"os"
 	"restaurantapp/cmd/handler"
 	"restaurantapp/pkg/schema"
 )
