@@ -2,18 +2,21 @@ package handler
 
 import (
 	"bytes"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"restaurantapp/pkg/schema"
 )
 
-func PostSchema(url string) bool {
+func PostSchema(url string, body []byte) bool {
+
+	var response schema.Response
 
 	if url == "" {
 		return false
 	}
 
-	body := schema.Get()
 	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(body))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -32,6 +35,22 @@ func PostSchema(url string) bool {
 		log.Fatal(resp.Status)
 	}
 
-	return true
+	jsonBody, err := ioutil.ReadAll(resp.Body)
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = json.Unmarshal([]byte(jsonBody), &response)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if response.Data.Code == "" {
+		log.Println(response.Errors[0].Message)
+		return false
+	}
+
+	return true
 }

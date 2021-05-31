@@ -1,7 +1,6 @@
 package transactions
 
 import (
-	ModelBuyer "restaurantapp/pkg/models/buyers"
 	ModelProduct "restaurantapp/pkg/models/products"
 	"strings"
 )
@@ -16,13 +15,13 @@ const (
 
 type Transaction struct {
 	Id       string                 `json:"id"`
-	Buyer    ModelBuyer.Buyer       `json:"buyer"`
+	Buyer    string                 `json:"buyer"`
 	Ip       string                 `json:"ip"`
 	Device   string                 `json:"device"`
 	Products []ModelProduct.Product `json:"products"`
 }
 
-func New(id string, buyer ModelBuyer.Buyer, ip string, device string, products []ModelProduct.Product) *Transaction {
+func New(id string, buyer string, ip string, device string, products []ModelProduct.Product) *Transaction {
 	return &Transaction{
 		Id:       id,
 		Buyer:    buyer,
@@ -34,11 +33,12 @@ func New(id string, buyer ModelBuyer.Buyer, ip string, device string, products [
 
 func ReadBody(body string) ([]Transaction, error) {
 	var input []Transaction
-	var products []ModelProduct.Product
+	keys := make(map[string]bool)
 	txnList := strings.Split(body, "#")
 
 	for _, txn := range txnList {
 
+		var products []ModelProduct.Product
 		parts := strings.Split(txn, "\x00")
 
 		if len(parts) >= 5 {
@@ -48,14 +48,18 @@ func ReadBody(body string) ([]Transaction, error) {
 			device := parts[3]
 			prods := strings.Split(parts[4][1:len(parts[4])-1], ",")
 
-			for _, product := range prods {
-				newProduct := ModelProduct.Product{Id: product}
-				products = append(products, newProduct)
-			}
+			if _, value := keys[txnId]; !value {
+				keys[txnId] = true
 
-			newBuyer := ModelBuyer.Buyer{Id: buyerId}
-			newTransaction := New(txnId, newBuyer, ip, device, products)
-			input = append(input, *newTransaction)
+				for _, productId := range prods {
+					newP := ModelProduct.Product{Id: productId}
+					products = append(products, newP)
+					//products = append(products, productId)
+				}
+
+				newTransaction := New(txnId, buyerId, ip, device, products)
+				input = append(input, *newTransaction)
+			}
 		}
 
 	}
