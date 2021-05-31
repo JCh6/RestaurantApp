@@ -20,6 +20,7 @@ func main() {
 		r := chi.NewRouter()
 
 		r.Get("/load", handler.GetData(baseUrl, alterDb))
+		r.Get("/buyers", handler.GetBuyers())
 
 		log.Println("Server ready at :" + port)
 		log.Fatal(http.ListenAndServe(":"+port, r))

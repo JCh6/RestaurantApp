@@ -72,3 +72,25 @@ func InsertToDgraph(t string, body string) error {
 
 	return nil
 }
+
+func QueryGQL(q string, in map[string]interface{}, output interface{}) error {
+
+	client := GetGraphQL()
+	req := graphql.NewRequest(q)
+	req.Header.Set("Cache-Control", "no-cache")
+
+	if in != nil {
+		for key, val := range in {
+			req.Var(key, val)
+		}
+	}
+
+	ctx := context.Background()
+
+	log.Println("Running query")
+	if err := client.Run(ctx, req, &output); err != nil {
+		return err
+	}
+
+	return nil
+}

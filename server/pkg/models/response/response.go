@@ -5,12 +5,12 @@ import (
 )
 
 type Response struct {
-	Code         int    `json:"code"`
-	ErrorMessage string `json:"errorMessage"`
-	Body         string `json:"body"`
+	Code         int         `json:"code"`
+	ErrorMessage string      `json:"errorMessage"`
+	Body         interface{} `json:"body"`
 }
 
-func New(code int, errorMessage string, body string) *Response {
+func New(code int, errorMessage string, body interface{}) *Response {
 	return &Response{
 		Code:         code,
 		ErrorMessage: errorMessage,
@@ -18,7 +18,11 @@ func New(code int, errorMessage string, body string) *Response {
 	}
 }
 
-func GetResponseBody(code int, errorMessage string, body string) []byte {
+func ContentType() string {
+	return "application/json; charset=utf-8"
+}
+
+func GetResponseBody(code int, errorMessage string, body interface{}) []byte {
 	var resp *Response
 
 	resp = New(code, errorMessage, body)

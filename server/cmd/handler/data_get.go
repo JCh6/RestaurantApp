@@ -4,18 +4,19 @@ import (
 	"net/http"
 	Config "restaurantapp/pkg/config"
 	ModelResponse "restaurantapp/pkg/models/response"
-	"restaurantapp/pkg/schema"
+	Schema "restaurantapp/pkg/schema"
 	"strconv"
 	"time"
 )
 
 func GetData(url string, alterUrl string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var data Schema.QueryAggregate
 		config := Config.Get()
 
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.Header().Set("Content-Type", ModelResponse.ContentType())
 
-		if PostSchema(alterUrl, schema.DeleteData()) {
+		if PostSchema(alterUrl, Schema.DeleteData()) {
 
 			for _, endPoint := range config {
 				var params []string
@@ -31,17 +32,24 @@ func GetData(url string, alterUrl string) http.HandlerFunc {
 				body, err, status := Get(url+endPoint.Route, params)
 
 				if err != nil {
-					w.Write(ModelResponse.GetResponseBody(status, err.Error(), ""))
+					w.Write(ModelResponse.GetResponseBody(status, err.Error(), nil))
 					return
 				}
 
 				if err := InsertToDgraph(endPoint.Name, body); err != nil {
-					w.Write(ModelResponse.GetResponseBody(501, err.Error(), ""))
+					w.Write(ModelResponse.GetResponseBody(502, err.Error(), nil))
 					return
 				}
 			}
 
-			w.Write(ModelResponse.GetResponseBody(200, "", "OK"))
+			err := QueryGQL(Schema.Count(), nil, &data)
+
+			if err != nil {
+				w.Write(ModelResponse.GetResponseBody(502, err.Error(), nil))
+				return
+			}
+
+			w.Write(ModelResponse.GetResponseBody(200, "", data))
 
 		}
 	}

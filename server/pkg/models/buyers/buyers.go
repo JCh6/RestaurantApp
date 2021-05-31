@@ -53,3 +53,15 @@ func AddBuyerGQL() string {
 		}
 	`)
 }
+
+func GetBuyersGQL() string {
+	return (`
+		query($first: Int, $offset: Int) {
+			queryBuyer(order: { asc: name }, first: $first, offset: $offset) {
+				id
+				name
+				age
+			}
+		}
+	`)
+}
