@@ -97,3 +97,22 @@ func GetTransactionsByBuyerGQL() string {
 		}	  
 	`)
 }
+
+func GetTransactionByIdGQL() string {
+	return (`
+		query($id: String!, $ip: String) {
+			getTransaction(id: $id) {
+				products {
+				name
+				price
+		  		}
+			}
+			other: queryTransaction(filter: { ip: { eq: $ip } }) {
+				buyer
+		  		products {
+				name
+		  		}
+			}
+	  	}
+	`)
+}

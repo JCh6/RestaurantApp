@@ -65,3 +65,13 @@ func GetBuyersGQL() string {
 		}
 	`)
 }
+
+func GetBuyersByIds() string {
+	return (`
+		query($ids: [String]) {
+			queryBuyer(filter: { id: { in: $ids } }) {
+				name
+			}
+		}
+	`)
+}

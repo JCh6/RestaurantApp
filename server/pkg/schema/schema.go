@@ -20,14 +20,14 @@ func Get() []byte {
 		}
 
 		type Buyer {
-			id: String! @id
+			id: String! @id 
 			name: String!
 			age: Int
 		}
 
 		type Transaction {
 			id: String! @id
-			buyer: String! @search(by: [hash])
+			buyer: String! @search(by: [hash]) 
 			ip: String! @search(by: [exact])
 			device: Device
 			products: [Product!]!
