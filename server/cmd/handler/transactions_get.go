@@ -2,17 +2,18 @@ package handler
 
 import (
 	"net/http"
-	ModelBuyer "restaurantapp/pkg/models/buyers"
 	ModelResponse "restaurantapp/pkg/models/response"
+	ModelTransaction "restaurantapp/pkg/models/transactions"
 	"strconv"
 )
 
-func GetBuyers() http.HandlerFunc {
+func GetTransactions() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var data interface{}
 		w.Header().Set("Content-Type", ModelResponse.ContentType())
 		pageNum, errPage := strconv.Atoi(r.URL.Query().Get("page"))
 		limit, errLimit := strconv.Atoi(r.URL.Query().Get("limit"))
+		buyer := r.URL.Query().Get("buyer")
 
 		if errPage != nil || pageNum <= 0 {
 			pageNum = 1
@@ -23,11 +24,12 @@ func GetBuyers() http.HandlerFunc {
 		}
 
 		input := map[string]interface{}{
+			"buyer":  buyer,
 			"first":  limit,
 			"offset": (pageNum - 1) * limit,
 		}
 
-		err := QueryGQL(ModelBuyer.GetBuyersGQL(), input, &data)
+		err := QueryGQL(ModelTransaction.GetTransactionsByBuyerGQL(), input, &data)
 
 		if err != nil {
 			w.Write(ModelResponse.GetResponseBody(502, err.Error(), nil))
@@ -35,5 +37,6 @@ func GetBuyers() http.HandlerFunc {
 		}
 
 		w.Write(ModelResponse.GetResponseBody(200, "", data))
+
 	}
 }

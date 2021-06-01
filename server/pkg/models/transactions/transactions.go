@@ -52,9 +52,8 @@ func ReadBody(body string) ([]Transaction, error) {
 				keys[txnId] = true
 
 				for _, productId := range prods {
-					newP := ModelProduct.Product{Id: productId}
-					products = append(products, newP)
-					//products = append(products, productId)
+					newProduct := ModelProduct.Product{Id: productId}
+					products = append(products, newProduct)
 				}
 
 				newTransaction := New(txnId, buyerId, ip, device, products)
@@ -76,5 +75,25 @@ func AddTransactionGQL() string {
 		  		}
 			}
 	  	}
+	`)
+}
+
+func GetTransactionsByBuyerGQL() string {
+	return (`
+		query($buyer: String, $first: Int, $offset: Int) {
+			queryTransaction(
+				filter: { buyer: { eq: $buyer } }
+				first: $first
+				offset: $offset
+			) {
+				id
+				ip
+				device
+				productsAggregate {
+					count
+					priceSum
+				}
+			}
+		}	  
 	`)
 }

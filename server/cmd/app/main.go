@@ -21,6 +21,7 @@ func main() {
 
 		r.Get("/load", handler.GetData(baseUrl, alterDb))
 		r.Get("/buyers", handler.GetBuyers())
+		r.Get("/transactions", handler.GetTransactions())
 
 		log.Println("Server ready at :" + port)
 		log.Fatal(http.ListenAndServe(":"+port, r))

@@ -11,8 +11,10 @@ import (
 
 func GetData(url string, alterUrl string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var data Schema.QueryAggregate
+		var data interface{}
 		config := Config.Get()
+
+		date := r.URL.Query().Get("date")
 
 		w.Header().Set("Content-Type", ModelResponse.ContentType())
 
@@ -20,7 +22,6 @@ func GetData(url string, alterUrl string) http.HandlerFunc {
 
 			for _, endPoint := range config {
 				var params []string
-				date := r.URL.Query().Get(endPoint.Param)
 
 				if date == "" {
 					date = strconv.FormatInt(time.Now().Unix(), 10)
