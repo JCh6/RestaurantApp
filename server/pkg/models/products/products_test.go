@@ -2,21 +2,28 @@ package products
 
 import "testing"
 
-func TestAdd(t *testing.T) {
-	/*prods := New()
-	prods.Add(Item{})
+func TestNewProduct(t *testing.T) {
+	id := "1x02"
+	name := "Flowers"
+	price := float32(4141)
 
-	if len(prods.Items) != 1 {
-		t.Errorf("Item was not added")
-	}*/
+	p := New(id, name, price)
+
+	if p.Id != id || p.Name != name || p.Price != price {
+		t.Errorf("Product was not created correctly")
+	}
 }
 
-func TestGetAll(t *testing.T) {
-	/*prods := New()
-	prods.Add(Item{})
-	results := prods.GetAll()
+func TestReadBody(t *testing.T) {
+	body := "9e160ac0'Cream of mushroom condensed soup'5020"
 
-	if len(results) != 1 {
-		t.Errorf("Item was not added")
-	}*/
+	products, err := ReadBody(body)
+
+	if err != nil {
+		t.Errorf(err.Error())
+	}
+
+	if len(products) != 1 {
+		t.Errorf("Product was not added")
+	}
 }

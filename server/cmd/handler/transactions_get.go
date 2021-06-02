@@ -35,9 +35,10 @@ func GetTransactions() http.HandlerFunc {
 					"ids": ids,
 				}
 
-				err = QueryGQL(ModelBuyer.GetBuyersByIds(), input, &buyersInfo)
-
-				dMap["buyerInfo"] = buyersInfo
+				if len(ids) > 0 {
+					err = QueryGQL(ModelBuyer.GetBuyersByIds(), input, &buyersInfo)
+					dMap["buyerInfo"] = buyersInfo
+				}
 			}
 
 		} else {
