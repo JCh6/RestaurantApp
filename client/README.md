@@ -1,4 +1,4 @@
-# client
+# RestaurantApp
 
 ## Project setup
 ```
