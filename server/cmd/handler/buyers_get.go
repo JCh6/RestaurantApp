@@ -11,6 +11,7 @@ func GetBuyers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var data interface{}
 		w.Header().Set("Content-Type", ModelResponse.ContentType())
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		pageNum, errPage := strconv.Atoi(r.URL.Query().Get("page"))
 		limit, errLimit := strconv.Atoi(r.URL.Query().Get("limit"))
 

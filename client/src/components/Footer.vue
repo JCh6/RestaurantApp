@@ -3,7 +3,6 @@
         <v-card class="flex" tile color="white">
             <v-card-title>
                 <v-spacer></v-spacer>
-
                 <v-btn
                     v-for="(image, index) of images"
                     :key="index"
@@ -18,7 +17,6 @@
                         :src="require(`@/assets/${image.name}`)"
                     />
                 </v-btn>
-
                 <v-spacer></v-spacer>
             </v-card-title>
         </v-card>

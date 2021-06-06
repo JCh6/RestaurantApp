@@ -17,6 +17,7 @@ func GetData(url string, alterUrl string) http.HandlerFunc {
 		date := r.URL.Query().Get("date")
 
 		w.Header().Set("Content-Type", ModelResponse.ContentType())
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		if PostSchema(alterUrl, Schema.DeleteData()) {
 

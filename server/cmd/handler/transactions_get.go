@@ -15,6 +15,7 @@ func GetTransactions() http.HandlerFunc {
 		var err error
 
 		w.Header().Set("Content-Type", ModelResponse.ContentType())
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 
 		txnId := r.URL.Query().Get("id")
 		buyer := r.URL.Query().Get("buyer")
