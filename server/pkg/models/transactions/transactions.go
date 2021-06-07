@@ -94,6 +94,9 @@ func GetTransactionsByBuyerGQL() string {
 					priceSum
 				}
 			}
+			aggregateTransaction(filter: { buyer: { eq: $buyer } }) {
+				count
+			}
 		}	  
 	`)
 }
