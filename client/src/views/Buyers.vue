@@ -90,7 +90,7 @@ export default {
             ];
         },
         handleClick(row) {
-            console.log(row);
+            this.$router.push(`/buyers/${row.id}/transactions`);
         },
     },
     computed: {

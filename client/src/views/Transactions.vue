@@ -291,11 +291,11 @@ export default {
         this.setActiveViewName(`Buyer: (${this.buyerId})`);
 
         if (this.infoLoaded.numBuyers == 0) {
-            /*this.showCard = false;
+            this.showCard = false;
             this.showAlert({
                 type: "warning",
                 text: "There is no data loaded. Please select a new date.",
-            });*/
+            });
         }
     },
     mounted() {
