@@ -8,7 +8,6 @@
                     info
                 </v-icon>
             </template>
-            <span>Last Load:</span><br />
             <span>Products: {{ infoLoaded.numProducts }}</span><br />
             <span>Buyers: {{ infoLoaded.numBuyers }}</span><br />
             <span>Transactions: {{ infoLoaded.numTransactions }}</span><br />

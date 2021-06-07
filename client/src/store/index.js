@@ -36,7 +36,7 @@ export default new Vuex.Store({
             state.infoLoaded.numBuyers = newInfo.numBuyers;
             state.infoLoaded.numTransactions = newInfo.numTransactions;
             state.infoLoaded.date = newInfo.lastDate;
-        }
+        },
     },
     actions: {
         getJSON(state, req) {

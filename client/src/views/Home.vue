@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapMutations, mapActions } from "vuex";
+import { mapMutations, mapActions } from 'vuex';
 
 export default {
     name: "Home",
@@ -46,11 +46,12 @@ export default {
             this.loading = true;
             const newAlert = { type: "info" };
             try {
+                let resp = null;
                 const req = {
                     endpoint: "load",
                     params: { date: new Date(selectedDate).getTime() },
                 };
-                let resp = await this.getJSON(req);
+                resp = await this.getJSON(req);
 
                 if (resp.data && resp.data.code === 200) {
                     let body = resp.data.body;
@@ -65,16 +66,17 @@ export default {
                     newAlert.type = "error";
                     newAlert.text = resp.data.errorMessage;
                 }
-            } catch (e) {
-                newAlert.text = e;
+            } catch (err) {
+                newAlert.text = err;
                 newAlert.type = "error";
             } finally {
                 this.loading = false;
                 this.showAlert(newAlert);
+                this.$router.push("/buyers");
             }
         },
     },
-    mounted() {
+    created() {
         this.setActiveViewName("Calendar");
     },
 };

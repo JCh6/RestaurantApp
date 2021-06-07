@@ -1,7 +1,7 @@
 <template>
     <v-alert
         v-if="alertInfo.show"
-        elevation="2"
+        elevation="1"
         :type="alertInfo.type"
         dense
         text
