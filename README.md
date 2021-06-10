@@ -30,7 +30,7 @@ npm run lint
 sh start.sh
 ```
 
-## Run Dgraph Run
+## Run Dgraph
 ```
 sh init_dgraph.sh
 ```
